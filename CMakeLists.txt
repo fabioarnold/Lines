@@ -12,6 +12,8 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
 
 set(SOURCE_FILES
+    app.cpp
+    renderer.cpp
     main.cpp
 )
 
