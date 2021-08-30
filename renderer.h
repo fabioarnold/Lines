@@ -19,7 +19,7 @@ public:
     void init();
 
     /// All drawing should be wrapped by begin and end, end draws everything to the screen
-    void begin();
+    void begin(float width, float height);
     void end();
 
     /// Set current color for drawing
@@ -37,5 +37,6 @@ private:
     unsigned _num_vertices;
     GLuint _vbo;
     GLuint _program;
+    GLuint _resolution_loc;
     Color _color;
 };

@@ -25,7 +25,9 @@ int main(int argc, char* argv[]) {
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES); // fails assertion on Windows/AMD
     int window_x = SDL_WINDOWPOS_UNDEFINED;
     int window_y = SDL_WINDOWPOS_UNDEFINED;
-    SDL_Window* window = SDL_CreateWindow(APP_TITLE, window_x, window_y, 640, 480, SDL_WINDOW_OPENGL);
+    int window_width = 640;
+    int window_height = 480;
+    SDL_Window* window = SDL_CreateWindow(APP_TITLE, window_x, window_y, window_width, window_height, SDL_WINDOW_OPENGL);
     if (window == NULL) {
         SDL_Log("Could not create window: %s", SDL_GetError());
         return 1;
@@ -56,7 +58,7 @@ int main(int argc, char* argv[]) {
         glClearColor(1, 1, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        renderer.begin();
+        renderer.begin((float)window_width, (float)window_height);
         app.draw(renderer);
         renderer.end();
 
