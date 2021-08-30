@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+#include <cmath> // for sqrtf
 #include <cstddef> // for offsetof macro
 
 const char *vs_src = 
@@ -66,24 +67,57 @@ void Renderer::end() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
     glDrawArrays(GL_TRIANGLES, 0, _num_vertices);
+}
+
+void Renderer::clear() {
+    glClearColor((GLfloat)_color.r/255.0f, (GLfloat)_color.g/255.0f, (GLfloat)_color.b/255.0f, (GLfloat)_color.a/255.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Renderer::drawPolygon(float *coords, unsigned num_coords) {
     for (unsigned i = 2; i < num_coords; i++) {
-        drawTriangle(&coords[(i-2)*2]);
+        addVertex(coords[0], coords[1], _color);
+        addVertex(coords[2 * (i-1) + 0], coords[2 * (i-1) + 1], _color);
+        addVertex(coords[2 * i + 0], coords[2 * i + 1], _color);
     }
 }
 
-void Renderer::drawTriangle(float *coords) {
-    if (_num_vertices + 3 > MAX_VERTICES) return;
+void Renderer::addVertex(float x, float y, const Color &color) {
+    if (_num_vertices + 1 > MAX_VERTICES) return;
+    _vertices[_num_vertices].pos[0] = x;
+    _vertices[_num_vertices].pos[1] = y;
+    _vertices[_num_vertices].color = color;
+    _num_vertices++;
+}
 
-    Vertex *v = &_vertices[_num_vertices];
-    for (unsigned i = 0; i < 3; i++) {
-        v[i].pos[0] = coords[2 * i + 0];
-        v[i].pos[1] = coords[2 * i + 1];
-        v[i].color = _color;
+void Renderer::drawLine(float sx, float sy, float ex, float ey, float w) {
+    float dx = ex - sx;
+    float dy = ey - sy;
+    float d = sqrtf(dx*dx + dy*dy);
+    if (d > 0.0001f) {
+        // normalize
+        dx /= d;
+        dy /= d;
     }
-    _num_vertices += 3;
+    // normal
+    float nx = dy;
+    float ny = -dx;
+    w *= 0.5f;
+    dx *= w;
+    dy *= w;
+    nx *= w;
+    ny *= w;
+
+    float coords[2*4];
+    coords[0] = sx - dx - nx;
+    coords[1] = sy - dy - ny;
+    coords[2] = sx - dx + nx;
+    coords[3] = sy - dy + ny;
+    coords[4] = ex + dx + nx;
+    coords[5] = ey + dy + ny;
+    coords[6] = ex + dx - nx;
+    coords[7] = ey + dy - ny;
+    drawPolygon(coords, 4);
 }

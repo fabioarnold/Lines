@@ -24,16 +24,16 @@ public:
     void end();
 
     /// Set current color for drawing
-    void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {_color.r = r; _color.g = g; _color.b = b; _color.a = a;};
-
-    /// Draw a triangle
-    void drawTriangle(float *coords);
+    void setColor(const Color& color) {_color = color;};
+    /// Clear screen using current color
+    void clear();
     /// Draw a polygon fan
     void drawPolygon(float *coords, unsigned num_coords);
     /// Draw a line from start to end with a certain width
     void drawLine(float sx, float sy, float ex, float ey, float w);
 
 private:
+    void addVertex(float x, float y, const Color &color);
     Vertex _vertices[MAX_VERTICES];
     unsigned _num_vertices;
     GLuint _vbo;

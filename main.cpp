@@ -1,6 +1,5 @@
 const char *APP_TITLE = "Lines";
 
-#include <stdio.h>
 #include <SDL.h>
 
 #ifdef _WIN32
@@ -39,7 +38,12 @@ int main(int argc, char* argv[]) {
     }
     gladLoadGLES2Loader(SDL_GL_GetProcAddress);
 
+    glFrontFace(GL_CW); // we flipped y in the shader -> need cw winding
+    glEnable(GL_CULL_FACE);
+
     renderer.init();
+    app.init();
+    Color background_color = randomBackgroundColor();
 
     bool quit = false;
     while (!quit) {
@@ -55,16 +59,16 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        glClearColor(1, 1, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         renderer.begin((float)window_width, (float)window_height);
+        renderer.setColor(background_color);
+        renderer.clear();
         app.draw(renderer);
         renderer.end();
 
         SDL_GL_SwapWindow(window);
     }
 
+    app.destroy();
     renderer.destroy();
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);

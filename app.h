@@ -7,11 +7,17 @@ struct Line {
     float sx, sy;
     float ex, ey;
     float width;
-    uint8_t r, g, b, a;
+    Color color;
 };
+
+Color randomForegroundColor();
+Color randomBackgroundColor();
 
 class App {
 public:
+    void init();
+    void destroy();
+
     void draw(Renderer &renderer);
 
 private:
