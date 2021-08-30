@@ -1,5 +1,6 @@
 #include "app.h"
 
+#include <cmath> // for fmod
 #include <cstdlib> // for rand
 
 void App::init() {

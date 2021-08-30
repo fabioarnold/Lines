@@ -18,4 +18,4 @@ set(SOURCE_FILES
 )
 
 add_executable(Lines WIN32 ${SOURCE_FILES})
-target_link_libraries(Lines ${OPENGL_LIBRARY} ${SDL2_LIBRARIES} glad)
+target_link_libraries(Lines ${OPENGL_LIBRARY} ${SDL2_LIBRARY} glad)
