@@ -1,3 +1,9 @@
+# Drawing anti-aliased lines
+
+Idea from https://jet.ro/2011/06/04/better-looking-anti-aliased-lines-with-simple-trick/
+
+![Screenshot](/screenshot.png?raw=true "Screenshot")
+
 ## Requirements
 
 * C++ compiler

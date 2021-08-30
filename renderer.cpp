@@ -76,7 +76,55 @@ void Renderer::clear() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
+float tmp_normals[200];
+float tmp_coords[200];
 void Renderer::drawPolygon(float *coords, unsigned num_coords) {
+    if (num_coords > 100) return;
+
+    // calculate normals
+    for (unsigned i = 0, j = num_coords-1; i < num_coords; j = i++) {
+        float *v0 = &coords[2*j];
+        float *v1 = &coords[2*i];
+        float dx = v1[0] - v0[0];
+        float dy = v1[1] - v0[1];
+        float d = sqrtf(dx*dx + dy*dy);
+        if (d > 0.0001f) {
+            dx /= d;
+            dy /= d;
+        }
+        tmp_normals[2 * j + 0] = dy;
+        tmp_normals[2 * j + 1] = -dx;
+    }
+
+    // expand polygon along normals by r
+    const float r = 1.0f;
+    for (unsigned i = 0, j = num_coords-1; j < num_coords; j = i++) {
+        float dx = 0.5f * (tmp_normals[2*j+0] + tmp_normals[2*i+0]); // average
+        float dy = 0.5f * (tmp_normals[2*j+1] + tmp_normals[2*i+1]);
+        float dr2 = dx*dx + dy*dy;
+        if (dr2 > 0.0001f) {
+            if (dr2 < 0.1f) dr2 = 0.1f;
+            dx /= dr2;
+            dy /= dr2;
+        }
+        tmp_coords[2 * i + 0] = coords[2 * i + 0] + dx * r;
+        tmp_coords[2 * i + 1] = coords[2 * i + 1] + dy * r;
+    }
+
+    Color trans = {_color.r, _color.g, _color.b, 0};
+
+    // draw fin
+    for (unsigned i = 0, j = num_coords - 1; i < num_coords; j = i++) {
+        addVertex(coords[2*i+0], coords[2*i+1], _color);
+        addVertex(coords[2*j+0], coords[2*j+1], _color);
+        addVertex(tmp_coords[2*j+0], tmp_coords[2*j+1], trans);
+
+        addVertex(tmp_coords[2*j+0], tmp_coords[2*j+1], trans);
+        addVertex(tmp_coords[2*i+0], tmp_coords[2*i+1], trans);
+        addVertex(coords[2*i+0], coords[2*i+1], _color);
+    }
+
+    // draw solid
     for (unsigned i = 2; i < num_coords; i++) {
         addVertex(coords[0], coords[1], _color);
         addVertex(coords[2 * (i-1) + 0], coords[2 * (i-1) + 1], _color);
@@ -104,7 +152,11 @@ void Renderer::drawLine(float sx, float sy, float ex, float ey, float w) {
     // normal
     float nx = dy;
     float ny = -dx;
+
+    const float r = 1.0f; // shrink width
+    w -= r;
     w *= 0.5f;
+    if (w < 0.01f) w = 0.01f;
     dx *= w;
     dy *= w;
     nx *= w;

@@ -27,7 +27,10 @@ void App::init() {
         line.sy = y - 100;
         line.ex = 50 + (float)i * 80 + 0.5f;
         line.ey = y;
-        if (i == 7) line.ey = line.sy; // horizontal line
+        if (i == 7) { // horizontal line
+            line.sy += 0.5f; // move to pixel center
+            line.ey = line.sy;
+        }
         line.color = randomForegroundColor();
         line.width = 1;
         _lines.push_back(line);
