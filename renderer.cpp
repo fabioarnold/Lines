@@ -44,6 +44,11 @@ void Renderer::init() {
     _resolution_loc = glGetUniformLocation(_program, "u_resolution");
 }
 
+void Renderer::destroy() {
+    glDeleteBuffers(1, &_vbo);
+    glDeleteProgram(_program);
+}
+
 void Renderer::begin(float width, float height) {
     _num_vertices = 0;
 

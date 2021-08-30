@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
         SDL_GL_SwapWindow(window);
     }
 
+    renderer.destroy();
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();

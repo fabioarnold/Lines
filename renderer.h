@@ -17,6 +17,7 @@ class Renderer {
 public:
     // Initialize renderer, OpenGL needs to be ready before calling this
     void init();
+    void destroy();
 
     /// All drawing should be wrapped by begin and end, end draws everything to the screen
     void begin(float width, float height);
